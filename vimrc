@@ -23,6 +23,8 @@ Plugin 'tpope/vim-fugitive'
 
 call vundle#end()
 
+filetype plugin indent on         " required for vundle
+
 "Tagbar VHDL Settings {{{
 let g:tagbar_type_vhdl = {
     \'ctagstype': 'vhdl',
@@ -63,25 +65,15 @@ let g:airline_powerline_fonts = 1
 
 " }}}
 
-" set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim  " Powerline
-" Bundle 'Lokaltog/powerline'
-" ""Bundle 'bling/vim-airline'
-" 
-"Bundle 'SirVer/ultisnips'
-"Bundle 'honza/vim-snippets'
-"
-filetype plugin indent on         " required for vundle
 
 "let g:airline_powerline_fonts=1
-"
+
 "" Use a dark background
 set background=dark
-"
-"" Enable loading filetype and indentation plugins
-"
-"" syntax coloring
-"syntax on
-"
+
+" syntax coloring
+syntax on
+
 " indentation
 set smartindent
 set tabstop=4
@@ -108,20 +100,12 @@ set lazyredraw      " Speeds up macros by not redrawing at each step
 " When a bracket is inserted, briefly jump to a matching one
 set showmatch
 
-"" Write swap file to disk after every 50 characters
-"set updatecount=50
-"
-"
-"
-"" search
-"set hlsearch
-"set ignorecase
-"set smartcase       " does case sensitive search if there's a capital
-"
+" Write swap file to disk after every 50 characters
+set updatecount=50
+
 " keybindings
 let mapleader=","
 let maplocalleader='\'
-
 
 " Enable/Disable tagbar
 nnoremap <leader>t :TagbarToggle<CR>
@@ -132,11 +116,9 @@ nnoremap <leader>u :GundoToggle<CR>
 " Search using Ag
 nnoremap <leader>a :Ag 
 
-"" Quickly exit insert mode by typing jj instead of esc
-"imap jj <esc>
 " list buffers and get ready to jump
 nnoremap <leader>l :ls<CR>:b<space>
-"
+
 " use the wildmenu
 set wildmenu
 set wildmode=list:longest,full
@@ -144,15 +126,15 @@ set wildmode=list:longest,full
 set wildignore+=*.o,*.obj,*.pyc,.git
 
 
-"" Tell vim to remember certain things when we exit
-""  '10  :  marks will be remembered for up to 10 previously edited files
-""  "100 :  will save up to 100 lines for each register
-""  :300 :  up to 300 lines of command-line history will be remembered
-""  %    :  saves and restores the buffer list
-""  n... :  where to save the viminfo files
-"set viminfo='10,\"100,:300,%,n~/.viminfo
-"
-"
+" Tell vim to remember certain things when we exit
+"  '10  :  marks will be remembered for up to 10 previously edited files
+"  "100 :  will save up to 100 lines for each register
+"  :300 :  up to 300 lines of command-line history will be remembered
+"  %    :  saves and restores the buffer list
+"  n... :  where to save the viminfo files
+set viminfo='10,\"100,:300,%,n~/.viminfo
+
+
 "" Use silver searcher https://github.com/ggreer/the_silver_searcher
 "if executable('ag')
 "    let g:ackprg = 'ag --nogroup --column'
@@ -189,7 +171,6 @@ set foldlevelstart=0
     iabbrev slv std_logic_vector
     iabbrev sl std_logic
 " }}}
-
 
 " Searching {{{
 
@@ -243,7 +224,16 @@ augroup filetype_c
     autocmd FileType c setlocal foldmethod=marker
 augroup END
 " }}}
-"
+
+" Markdown files {{{
+augroup filetype_md
+    autocmd!
+    autocmd BufNewFile,BufReadPost *.md,*.txt,README set filetype=markdown
+augroup END
+" }}}
+
+
+" VHDL/Verilog help {{{
 function! VHDL_port_setup()
     let l = split(getline(line(".")))
     if len(l) < 2
@@ -360,5 +350,6 @@ vim.current.line = l
 endpython
 endfunction
 
+" }}}
 
 
