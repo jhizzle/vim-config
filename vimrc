@@ -187,6 +187,7 @@ function! FoldColumnToggle()
 endfunction
 
 set foldlevelstart=0
+set foldmethod=marker
 
 " Abbreviations {{{
     iabbrev proclk process (clk)<cr>begin<cr>if rising_edge(clk) then<cr>if (rst_n = '0') then<cr>d;<cr>else<cr>d;<cr>end if;<cr>end if;<cr>end process;
