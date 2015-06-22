@@ -55,7 +55,7 @@ let g:ctrlp_working_path_mode = 'ra'            " lets us change the working pat
 
 " }}}
 
-" Gundo settings {{{ 
+" Gundo settings {{{
 let g:gundo_preview_bottom = 1
 " }}}
 
@@ -136,7 +136,7 @@ nnoremap <leader>t :TagbarToggle<CR>
 nnoremap <leader>u :GundoToggle<CR>
 
 " Search using Ag
-nnoremap <leader>a :Ag 
+nnoremap <leader>a :Ag
 
 " list buffers and get ready to jump
 nnoremap <leader>l :ls<CR>:b<space>
@@ -294,7 +294,7 @@ r = re.search("^\s*(input|output|inout)\s*(\[.*\])?\s+(\w+),", l)
 data = r.groups()
 
 name = r.groups()[0]
-name = name.replace('input', 'in   ')    
+name = name.replace('input', 'in   ')
 name = name.replace('output', 'out  ')
 name = name.replace('inout', 'inout')
 
@@ -330,7 +330,7 @@ import re
 l = vim.current.line
 
 m = re.search('\s*(\w+)\s*:\s*(in|out|inout)\s+(std_logic_vector.*)?.*;', l)
-r = "" 
+r = ""
 if m.groups()[2]:
     r = m.groups()[2][17:-1]
     r = r.replace('downto', ':')
