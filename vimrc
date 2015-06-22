@@ -21,6 +21,8 @@ Plugin 'bling/vim-airline'
 
 Plugin 'tpope/vim-fugitive'
 
+Plugin 'christoomey/vim-tmux-navigator'
+
 call vundle#end()
 
 filetype plugin indent on         " required for vundle
@@ -126,7 +128,7 @@ set showmatch
 set updatecount=50
 
 " keybindings
-let mapleader=","
+let mapleader=" "
 let maplocalleader='\'
 
 " Enable/Disable tagbar
@@ -171,11 +173,13 @@ set viminfo='10,\"100,:300,%,n~/.viminfo
 
 
 
-nnoremap <leader>f : call FoldColumnToggle()<cr>
+nnoremap <leader>c : call FoldColumnToggle()<cr>
 
 " Move to next line visually, meaning, don't skip over wrapped lines
 nnoremap j gj
 nnoremap k gk
+
+nnoremap t <c-]>
 
 
 function! FoldColumnToggle()
@@ -188,6 +192,12 @@ endfunction
 
 set foldlevelstart=0
 set foldmethod=marker
+
+" Shortcuts {{{
+nnoremap <leader>w :set wrap!<cr>
+nnoremap <leader>nn :set number!<cr>
+
+" }}}
 
 " Abbreviations {{{
     iabbrev proclk process (clk)<cr>begin<cr>if rising_edge(clk) then<cr>if (rst_n = '0') then<cr>d;<cr>else<cr>d;<cr>end if;<cr>end if;<cr>end process;
@@ -215,8 +225,8 @@ inoremap jk <esc>
 inoremap <esc> <nop>
 
 " Enable and disable detection of trailing whitespace
-nnoremap <leader>w :match Error '\v\s+$'<cr>
-nnoremap <leader>W :match none<cr>
+nnoremap <leader>ws :match Error '\v\s+$'<cr>
+nnoremap <leader>Ws :match none<cr>
 
 " automatically insert \v for search (very-magic)
 nnoremap / /\v
@@ -379,14 +389,14 @@ endfunction
 " CSCOPE {{{
 set cscopetag
 
-nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <leader>fi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 nmap <C-Space><C-Space>s \:vert scs find s <C-R>=expand("<cword>")<CR><CR>
 nmap <C-Space><C-Space>g \:vert scs find g <C-R>=expand("<cword>")<CR><CR>
