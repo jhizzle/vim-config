@@ -196,6 +196,8 @@ set foldmethod=marker
 " Shortcuts {{{
 nnoremap <leader>w :set wrap!<cr>
 nnoremap <leader>nn :set number!<cr>
+nnoremap <leader>be :%!xxd<cr>
+nnoremap <leader>br :%!xxd -r<cr>
 
 " }}}
 
