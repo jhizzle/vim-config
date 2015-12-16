@@ -410,3 +410,10 @@ nmap <C-Space><C-Space>d \:vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
 "}}}
 
+let g:ctrlp_max_files=0
+
+"{{{ Filetype specific indentation
+autocmd Filetype html setlocal ts=2 sts=2 sw=2
+autocmd Filetype yaml setlocal ts=1 sts=1 sw=1
+"}}}
+"
