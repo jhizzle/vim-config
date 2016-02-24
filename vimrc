@@ -146,6 +146,9 @@ nnoremap <leader>a :Ag
 " list buffers and get ready to jump
 nnoremap <leader>l :ls<CR>:b<space>
 
+" Turn on spell check
+nnoremap <leader>sc :set spell! spelllang=en_us<CR>
+
 " use the wildmenu
 set wildmenu
 set wildmode=list:longest,full
