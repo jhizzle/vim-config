@@ -23,6 +23,8 @@ Plugin 'tpope/vim-fugitive'
 
 Plugin 'christoomey/vim-tmux-navigator'
 
+Plugin 'chase/vim-ansible-yaml'
+
 call vundle#end()
 
 filetype plugin indent on         " required for vundle
@@ -54,6 +56,7 @@ let g:ctrlp_match_window = 'bottom,order:ttb'   " open on bottom with top to bot
 let g:ctrlp_switch_buffer = 0                   " always open a new buffer
 let g:ctrlp_working_path_mode = 'ra'            " lets us change the working path
 "let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'   " Use the silver searcher to speed things up
+let g:ctrlp_max_files=0
 
 " }}}
 
@@ -410,10 +413,9 @@ nmap <C-Space><C-Space>d \:vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
 "}}}
 
-let g:ctrlp_max_files=0
 
 "{{{ Filetype specific indentation
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
-autocmd Filetype yaml setlocal ts=1 sts=1 sw=1
+autocmd Filetype yaml setlocal ts=2 sts=2 sw=2 nosi
 "}}}
-"
+
