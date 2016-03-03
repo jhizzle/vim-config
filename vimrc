@@ -153,6 +153,7 @@ nnoremap <leader>l :ls<CR>:b<space>
 
 " Turn on spell check
 nnoremap <leader>sc :set spell! spelllang=en_us<CR>
+nnoremap <leader>ss z=
 
 " use the wildmenu
 set wildmenu
