@@ -1,0 +1,63 @@
+
+snippet libs "library ieee; use ieee.std_logic_1164.all..."
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+$0
+endsnippet
+
+snippet lib "library <lib>;"
+library ${1:std};
+use $1.${2:textio}.all;
+$0
+endsnippet
+
+snippet entity "entity <entityname>..."
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity ${1:widget} is
+	generic (
+		${2:-- generics}
+	);
+	port (
+		${3:-- ports}
+	);
+end entity $1;
+
+architecture ${4:rtl} of $1 is
+	${5:-- signal declarations}
+begin
+	${0:--body}
+end architecture;
+endsnippet
+
+snippet if "if .. then ... end if"
+if (${1:true}) then
+	${VISUAL}$0
+end if;
+endsnippet
+
+snippet elsif "if .. then ... end if"
+elsif (${1:true}) then
+	${VISUAL}
+endsnippet
+
+snippet proclk "process (clk)..."
+${4:FF: }process (${1:clk})
+begin
+	if rising_edge($1) then
+		if (${2:rstn}) then
+			${3:-- reset}
+		else
+			${VISUAL:-- normal ops}
+			$0
+		end if;
+	end if;
+end process;
+endsnippet
+
+snippet printf
+printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+endsnippet
