@@ -27,6 +27,9 @@ Plugin 'chase/vim-ansible-yaml'
 
 Plugin 'SirVer/ultisnips'
 
+" Snippets are separated from the engine. Add this if you want them:
+Plugin 'honza/vim-snippets'
+
 Plugin 'ervandew/supertab'
 
 call vundle#end()
