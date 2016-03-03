@@ -57,6 +57,7 @@ let g:ctrlp_switch_buffer = 0                   " always open a new buffer
 let g:ctrlp_working_path_mode = 'ra'            " lets us change the working path
 "let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'   " Use the silver searcher to speed things up
 let g:ctrlp_max_files=0
+let g:ctrlp_custom_match = '^_site$|^.git$'
 
 " }}}
 
