@@ -58,6 +58,145 @@ begin
 end process;
 endsnippet
 
-snippet printf
-printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+snippet maxi "Master AXI interface"
+-- AXI master
+awid								: out   std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+awvalid								: out   std_logic;
+awready                           	: in    std_logic;
+awaddr                            	: out   std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+awlen                             	: out   std_logic_vector(7 downto 0);
+awsize                            	: out   std_logic_vector(2 downto 0);
+awburst                           	: out   std_logic_vector(1 downto 0);
+awlock                            	: out   std_logic_vector(1 downto 0); -- not in axi4?
+awcache                           	: out   std_logic_vector(3 downto 0);
+awprot                            	: out   std_logic_vector(2 downto 0);
+
+wvalid                            	: out   std_logic;
+wready                            	: in    std_logic;
+wdata                             	: out   std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+wstrb                             	: out   std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+wlast                             	: out   std_logic;
+
+bid                               	: in    std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+bvalid                            	: in    std_logic;
+bready                            	: out   std_logic;
+bresp                             	: in    std_logic_vector(1 downto 0);
+
+arid                              	: out   std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+arvalid                           	: out   std_logic;
+arready                           	: in    std_logic;
+araddr                            	: out   std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+arlen                             	: out   std_logic_vector(7 downto 0);
+arsize                            	: out   std_logic_vector(2 downto 0);
+arburst                           	: out   std_logic_vector(1 downto 0);
+arlock                            	: out   std_logic_vector(1 downto 0); -- not in axi4?
+arcache                           	: out   std_logic_vector(3 downto 0);
+arprot                            	: out   std_logic_vector(2 downto 0);
+
+rid                               	: in    std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+rvalid                            	: in    std_logic;
+rready                            	: out   std_logic;
+rdata                             	: in    std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+rlast                             	: in    std_logic;
+rresp                             	: in    std_logic_vector(1 downto 0);
 endsnippet
+
+snippet saxi "Slave AXI interface"
+-- AXI slave
+awid								: in    std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+awvalid								: in    std_logic;
+awready                           	: out   std_logic;
+awaddr                            	: in    std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+awlen                             	: in    std_logic_vector(7 downto 0);
+awsize                            	: in    std_logic_vector(2 downto 0);
+awburst                           	: in    std_logic_vector(1 downto 0);
+awlock                            	: in    std_logic_vector(1 downto 0); -- not in axi4?
+awcache                           	: in    std_logic_vector(3 downto 0);
+awprot                            	: in    std_logic_vector(2 downto 0);
+
+wvalid                            	: in    std_logic;
+wready                            	: out   std_logic;
+wdata                             	: in    std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+wstrb                             	: in    std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+wlast                             	: in    std_logic;
+
+bid                               	: out   std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+bvalid                            	: out   std_logic;
+bready                            	: in    std_logic;
+bresp                             	: out   std_logic_vector(1 downto 0);
+
+arid                              	: in    std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+arvalid                           	: in    std_logic;
+arready                           	: out   std_logic;
+araddr                            	: in    std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+arlen                             	: in    std_logic_vector(7 downto 0);
+arsize                            	: in    std_logic_vector(2 downto 0);
+arburst                           	: in    std_logic_vector(1 downto 0);
+arlock                            	: in    std_logic_vector(1 downto 0); -- not in axi4?
+arcache                           	: in    std_logic_vector(3 downto 0);
+arprot                            	: in    std_logic_vector(2 downto 0);
+
+rid                               	: out   std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+rvalid                            	: out   std_logic;
+rready                            	: in    std_logic;
+rdata                             	: out   std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+rlast                             	: out   std_logic;
+rresp                             	: out   std_logic_vector(1 downto 0);
+endsnippet
+
+snippet maxilite "Master AXI-Lite interface"
+-- AXI-lite master
+awvalid								: out   std_logic;
+awready                           	: in    std_logic;
+awaddr                            	: out   std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+awprot                            	: out   std_logic_vector(2 downto 0);
+
+wvalid                            	: out   std_logic;
+wready                            	: in    std_logic;
+wdata                             	: out   std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+wstrb                             	: out   std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+
+bvalid                            	: in    std_logic;
+bready                            	: out   std_logic;
+bresp                             	: in    std_logic_vector(1 downto 0);
+
+arvalid                           	: out   std_logic;
+arready                           	: in    std_logic;
+araddr                            	: out   std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+arprot                            	: out   std_logic_vector(2 downto 0);
+
+rvalid                            	: in    std_logic;
+rready                            	: out   std_logic;
+rdata                             	: in    std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+rresp                             	: in    std_logic_vector(1 downto 0);
+endsnippet
+
+
+snippet saxilite "Slave AXI-Lite interface"
+-- AXI-lite slave
+awvalid								: in    std_logic;
+awready                           	: out   std_logic;
+awaddr                            	: in    std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+awprot                            	: in    std_logic_vector(2 downto 0);
+
+wvalid                            	: in    std_logic;
+wready                            	: out   std_logic;
+wdata                             	: in    std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+wstrb                             	: in    std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+
+bvalid                            	: out   std_logic;
+bready                            	: in    std_logic;
+bresp                             	: out   std_logic_vector(1 downto 0);
+
+arvalid                           	: in    std_logic;
+arready                           	: out   std_logic;
+araddr                            	: in    std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
+arprot                            	: in    std_logic_vector(2 downto 0);
+
+rvalid                            	: out   std_logic;
+rready                            	: in    std_logic;
+rdata                             	: out   std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+rresp                             	: out   std_logic_vector(1 downto 0);
+endsnippet
+
+
