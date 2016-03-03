@@ -441,9 +441,8 @@ nmap <C-Space><C-Space>d \:vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
 "}}}
 
-
 "{{{ Filetype specific indentation
-autocmd Filetype html setlocal ts=2 sts=2 sw=2
-autocmd Filetype yaml setlocal ts=2 sts=2 sw=2 nosi
+autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType yaml setlocal tabstop=2 shiftwidth=2 softtabstop=2 nosmartindent
 "}}}
 
