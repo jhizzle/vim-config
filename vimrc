@@ -217,9 +217,6 @@ nnoremap <leader>br :%!xxd -r<cr>
 " }}}
 
 " Abbreviations {{{
-    iabbrev proclk process (clk)<cr>begin<cr>if rising_edge(clk) then<cr>if (rst_n = '0') then<cr>d;<cr>else<cr>d;<cr>end if;<cr>end if;<cr>end process;
-    iabbrev slv std_logic_vector
-    iabbrev sl std_logic
 " }}}
 
 " Searching {{{
@@ -284,6 +281,9 @@ augroup END
 
 
 " VHDL/Verilog help {{{
+
+"<portname> (i|o) [7 downto 0]
+" leave off width if you want std_logic instead of std_logic_vector
 function! VHDL_port_setup()
     let l = split(getline(line(".")))
     if len(l) < 2
@@ -402,7 +402,7 @@ endfunction
 
 " }}}
 
-"{{{ ultisnips and youcompleteme
+" ultisnips and youcompleteme {{{
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']

@@ -58,6 +58,14 @@ begin
 end process;
 endsnippet
 
+snippet sl "std_logic"
+std_logic
+endsnippet
+
+snippet slv "std_logic_vector(N downto M)"
+std_logic_vector(${1:32} ${2:downto} ${3:0})
+endsnippet
+
 snippet maxi "Master AXI interface"
 -- AXI master
 awid								: out   std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
