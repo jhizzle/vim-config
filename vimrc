@@ -224,6 +224,7 @@ nnoremap <leader>br :%!xxd -r<cr>
 
 set ignorecase
 set smartcase
+set hlsearch
 
 " }}}
 
