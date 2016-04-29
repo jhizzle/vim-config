@@ -5,6 +5,8 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 
+Plugin 'tpope/vim-sleuth'
+
 Plugin 'valloric/YouCompleteMe'
 
 Plugin 'majutsushi/tagbar'
