@@ -406,3 +406,21 @@ snippet statemachinemealy "Mealy style state machine"
     end case;
   end process;
 endsnippet
+
+
+snippet axistream "AXI Stream interface"
+s_valid                             : in    std_logic;
+s_ready                             : out   std_logic;
+s_data                              : in    std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+s_strb                              : in    std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+s_keep                              : in    std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+s_last                              : in    std_logic;
+
+m_valid                             : out   std_logic;
+m_ready                             : in    std_logic;
+m_data                              : out   std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
+m_strb                              : out   std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+m_keep                              : out   std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
+m_last                              : out   std_logic;
+endsnippet
+

@@ -1,13 +1,12 @@
 set nocompatible
 filetype off                " Required for vundle
 set rtp+=~/.vim/bundle/Vundle.vim  " Add vundle to the runtime path
+
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 
 Plugin 'tpope/vim-sleuth'
-
-Plugin 'valloric/YouCompleteMe'
 
 Plugin 'majutsushi/tagbar'
 
@@ -28,10 +27,10 @@ Plugin 'christoomey/vim-tmux-navigator'
 
 Plugin 'chase/vim-ansible-yaml'
 
-Plugin 'SirVer/ultisnips'
-
-" Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
+Plugin 'SirVer/ultisnips'
+Plugin 'valloric/YouCompleteMe'
+
 
 Plugin 'ervandew/supertab'
 
@@ -412,6 +411,8 @@ endfunction
 let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-j>'
+
+let g:UltiSnipsUsePythonVersion = 2
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<c-l>"
