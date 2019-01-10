@@ -29,8 +29,9 @@ endsnippet
 snippet simbody "simulation body process..."
 process
 begin
-  wait for ${1:clk_period} * 3 / 4;
+  wait for ${1:clk_period} * 1 / 4;
 
+  wait for clk_period * 10;
   ${2:runsim} <= false;
   wait;
 end process;
@@ -38,43 +39,74 @@ $0
 endsnippet
 
 snippet simtb "Simulation testbench"
+--******************************************************************************
+--
+--  COPYRIGHT NOTICE
+--
+--  (C) Copyright 2015 - 2018 Idaho Scientific, LLC. All right reserved.
+--
+--  This file contains confidential and proprietary information
+--  of Idaho Scientific, LLC. and is protected under U.S. and
+--  international copyright and other intellectual property
+--  laws.
+--
+--  This copyright notice is not a license and does not grant
+--  any rights to the materials distributed herewith. Please contact
+--  Idaho Scientific for any license inquires.
+--
+--  THIS COPYRIGHT NOTICE MUST BE RETAINED AS PART OF THIS FILE AT ALL TIMES.
+--
+--******************************************************************************
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity tb_${1:widget} is
+library idahoscientific_lib;
+use idahoscientific_lib.std_pkg.all;
+use idahoscientific_lib.std_sim_pkg.all;
+
+entity ${1:widget}_tb is
   generic (
-    clk_period                      : time := 10 ns
+    CLK_PERIOD_G : time := 10 ns;
   );
-end entity tb_$1;
+end entity $1_tb;
 
-architecture sim of tb_$1 is
+architecture sim of $1_tb is
 
-  signal ${2:clk}                        : std_logic := '0';
-  signal runsim                     : boolean := true;
+  signal runsim : boolean := true;
+
+  procedure tick(count : in natural := 1) is
+  begin
+    for i in 1 to count loop
+      wait until rising_edge(clk);
+    end loop;
+  end procedure;
 
 begin
 
-  Clk_Process: process
+  p_clk_proc: process
   begin
     while runsim loop
-      $2 <= '1';
-      wait for clk_period / 2;
-      $2 <= '0';
-      wait for clk_period / 2;
+      clk <= '0';
+      wait for CLK_PERIOD_G / 2;
+      clk <= '1';
+      wait for CLK_PERIOD_G / 2;
     end loop;
     wait;
   end process;
 
 
-  uut: entity work.$1
+  i_uut: entity work.$1
   $0
 
 
-  Main_Sim: process
+  p_main_sim: process
   begin
-    wait for clk_period * 3 / 4;
+    wait for 200 ns; -- wait for at least 100ns for GSR
+    tick;
 
+    tick(10);
     runsim <= false;
     wait;
   end process;
@@ -84,20 +116,68 @@ endsnippet
 
 
 snippet entity "entity <entityname>..."
+--******************************************************************************
+--
+--  COPYRIGHT NOTICE
+--
+--  (C) Copyright 2015 - 2018 Idaho Scientific, LLC. All right reserved.
+--
+--  This file contains confidential and proprietary information
+--  of Idaho Scientific, LLC. and is protected under U.S. and
+--  international copyright and other intellectual property
+--  laws.
+--
+--  This copyright notice is not a license and does not grant
+--  any rights to the materials distributed herewith. Please contact
+--  Idaho Scientific for any license inquires.
+--
+--  THIS COPYRIGHT NOTICE MUST BE RETAINED AS PART OF THIS FILE AT ALL TIMES.
+--
+--******************************************************************************
+
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity ${1:widget} is
   generic (
+    ${2}
   );
   port (
-    ${0:-- ports}
+    ${3}
   );
 end entity $1;
 
-architecture ${2:rtl} of $1 is
+architecture ${4:rtl} of $1 is
+  type state_t is (${0});
+
+  type reg_t is
+    record
+      state : state_t;
+    end record;
+
+  signal r, rin : reg_t;
 begin
+
+  p_comb: process (
+    r
+  ) is
+    variable v : reg_t;
+  begin
+    v := r;
+
+    rin <= v;
+  end process;
+
+
+  p_sync: process (clk) is
+  begin
+    if rising_edge(clk) then
+      r <= rin;
+    end if;
+  end process;
+
 end architecture;
 endsnippet
 
@@ -113,11 +193,11 @@ elsif (${1:true}) then
 endsnippet
 
 snippet proclk "process (clk)..."
-${4:FF: }process (${1:clk})
+p_${2:process_name}: process (${1:clk})
 begin
   if rising_edge($1) then
-    if (${2:rst_n = '0'}) then
-      ${3:-- reset}
+    if (${3:rst_n = '0'}) then
+      ${4:-- reset}
     else
       ${VISUAL:-- normal ops}
       $0
@@ -136,143 +216,135 @@ endsnippet
 
 snippet axim "Master AXI interface"
 -- AXI master
-awid    : out std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+aclk : in std_logic;
+aresetn : in std_logic;
+awid : out std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
 awvalid : out std_logic;
-awready : in  std_logic;
-awaddr  : out std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-awlen   : out std_logic_vector(7 downto 0);
-awsize  : out std_logic_vector(2 downto 0);
+awready : in std_logic;
+awaddr : out std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+awlen : out std_logic_vector(7 downto 0);
+awsize : out std_logic_vector(2 downto 0);
 awburst : out std_logic_vector(1 downto 0);
-awlock  : out std_logic_vector(1 downto 0); -- not in axi4?
+awlock : out std_logic_vector(0 downto 0);
 awcache : out std_logic_vector(3 downto 0);
-awprot  : out std_logic_vector(2 downto 0);
-wvalid  : out std_logic;
-wready  : in  std_logic;
-wdata   : out std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-wstrb   : out std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
-wlast   : out std_logic;
-bid     : in  std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-bvalid  : in  std_logic;
-bready  : out std_logic;
-bresp   : in  std_logic_vector(1 downto 0);
-arid    : out std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
+awprot : out std_logic_vector(2 downto 0);
+wvalid : out std_logic;
+wready : in std_logic;
+wdata : out std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+wstrb : out std_logic_vector((AXI_DATA_WIDTH_G / 8) - 1 downto 0);
+wlast : out std_logic;
+bid : in std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+bvalid : in std_logic;
+bready : out std_logic;
+bresp : in std_logic_vector(1 downto 0);
+arid : out std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
 arvalid : out std_logic;
-arready : in  std_logic;
-araddr  : out std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-arlen   : out std_logic_vector(7 downto 0);
-arsize  : out std_logic_vector(2 downto 0);
+arready : in std_logic;
+araddr : out std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+arlen : out std_logic_vector(7 downto 0);
+arsize : out std_logic_vector(2 downto 0);
 arburst : out std_logic_vector(1 downto 0);
-arlock  : out std_logic_vector(1 downto 0); -- not in axi4?
+arlock : out std_logic_vector(0 downto 0);
 arcache : out std_logic_vector(3 downto 0);
-arprot  : out std_logic_vector(2 downto 0);
-rid     : in  std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-rvalid  : in  std_logic;
-rready  : out std_logic;
-rdata   : in  std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-rlast   : in  std_logic;
-rresp   : in  std_logic_vector(1 downto 0);
+arprot : out std_logic_vector(2 downto 0);
+rid : in std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+rvalid : in std_logic;
+rready : out std_logic;
+rdata : in std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+rlast : in std_logic;
+rresp : in std_logic_vector(1 downto 0);
 endsnippet
-
-snippet axistream "AXI Stream interface"
-s_valid : in  std_logic;
-s_ready : out std_logic;
-s_data  : in  std_logic_vector(AXIS_DATA_WIDTH - 1 downto 0);
-s_strb  : in  std_logic_vector((AXIS_DATA_WIDTH / 8) - 1 downto 0);
-s_keep  : in  std_logic_vector((AXIS_DATA_WIDTH / 8) - 1 downto 0);
-s_last  : in  std_logic;
-m_valid : out std_logic;
-m_ready : in  std_logic;
-m_data  : out std_logic_vector(AXIS_DATA_WIDTH - 1 downto 0);
-m_strb  : out std_logic_vector((AXIS_DATA_WIDTH / 8) - 1 downto 0);
-m_keep  : out std_logic_vector((AXIS_DATA_WIDTH / 8) - 1 downto 0);
-m_last  : out std_logic;
-endsnippet
-
 
 snippet axis "Slave AXI interface"
 -- AXI slave
-awid    : in  std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-awvalid : in  std_logic;
+aclk : in std_logic;
+aresetn : in std_logic;
+awid : in std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+awvalid : in std_logic;
 awready : out std_logic;
-awaddr  : in  std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-awlen   : in  std_logic_vector(7 downto 0);
-awsize  : in  std_logic_vector(2 downto 0);
-awburst : in  std_logic_vector(1 downto 0);
-awlock  : in  std_logic_vector(1 downto 0); -- not in axi4?
-awcache : in  std_logic_vector(3 downto 0);
-awprot  : in  std_logic_vector(2 downto 0);
-wvalid  : in  std_logic;
-wready  : out std_logic;
-wdata   : in  std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-wstrb   : in  std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
-wlast   : in  std_logic;
-bid     : out std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-bvalid  : out std_logic;
-bready  : in  std_logic;
-bresp   : out std_logic_vector(1 downto 0);
-arid    : in  std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-arvalid : in  std_logic;
+awaddr : in std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+awlen : in std_logic_vector(7 downto 0);
+awsize : in std_logic_vector(2 downto 0);
+awburst : in std_logic_vector(1 downto 0);
+awlock : in std_logic_vector(0 downto 0);
+awcache : in std_logic_vector(3 downto 0);
+awprot : in std_logic_vector(2 downto 0);
+wvalid : in std_logic;
+wready : out std_logic;
+wdata : in std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+wstrb : in std_logic_vector((AXI_DATA_WIDTH_G / 8) - 1 downto 0);
+wlast : in std_logic;
+bid : out std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+bvalid : out std_logic;
+bready : in std_logic;
+bresp : out std_logic_vector(1 downto 0);
+arid : in std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+arvalid : in std_logic;
 arready : out std_logic;
-araddr  : in  std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-arlen   : in  std_logic_vector(7 downto 0);
-arsize  : in  std_logic_vector(2 downto 0);
-arburst : in  std_logic_vector(1 downto 0);
-arlock  : in  std_logic_vector(1 downto 0); -- not in axi4?
-arcache : in  std_logic_vector(3 downto 0);
-arprot  : in  std_logic_vector(2 downto 0);
-rid     : out std_logic_vector(AXI_ID_WIDTH - 1 downto 0);
-rvalid  : out std_logic;
-rready  : in  std_logic;
-rdata   : out std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-rlast   : out std_logic;
-rresp   : out std_logic_vector(1 downto 0);
+araddr : in std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+arlen : in std_logic_vector(7 downto 0);
+arsize : in std_logic_vector(2 downto 0);
+arburst : in std_logic_vector(1 downto 0);
+arlock : in std_logic_vector(0 downto 0);
+arcache : in std_logic_vector(3 downto 0);
+arprot : in std_logic_vector(2 downto 0);
+rid : out std_logic_vector(AXI_ID_WIDTH_G - 1 downto 0);
+rvalid : out std_logic;
+rready : in std_logic;
+rdata : out std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+rlast : out std_logic;
+rresp : out std_logic_vector(1 downto 0);
 endsnippet
 
 snippet aximlite "Master AXI-Lite interface"
 -- AXI-lite master
+aclk : in std_logic;
+aresetn : in std_logic;
 awvalid : out std_logic;
-awready : in  std_logic;
-awaddr  : out std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-awprot  : out std_logic_vector(2 downto 0);
-wvalid  : out std_logic;
-wready  : in  std_logic;
-wdata   : out std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-wstrb   : out std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
-bvalid  : in  std_logic;
-bready  : out std_logic;
-bresp   : in  std_logic_vector(1 downto 0);
+awready : in std_logic;
+awaddr : out std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+awprot : out std_logic_vector(2 downto 0);
+wvalid : out std_logic;
+wready : in std_logic;
+wdata : out std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+wstrb : out std_logic_vector((AXI_DATA_WIDTH_G / 8) - 1 downto 0);
+bvalid : in std_logic;
+bready : out std_logic;
+bresp : in std_logic_vector(1 downto 0);
 arvalid : out std_logic;
-arready : in  std_logic;
-araddr  : out std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-arprot  : out std_logic_vector(2 downto 0);
-rvalid  : in  std_logic;
-rready  : out std_logic;
-rdata   : in  std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-rresp   : in  std_logic_vector(1 downto 0);
+arready : in std_logic;
+araddr : out std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+arprot : out std_logic_vector(2 downto 0);
+rvalid : in std_logic;
+rready : out std_logic;
+rdata : in std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+rresp : in std_logic_vector(1 downto 0);
 endsnippet
 
 
 snippet axislite "Slave AXI-Lite interface"
 -- AXI-lite slave
-awvalid : in  std_logic;
+aclk : in std_logic;
+aresetn : in std_logic;
+awvalid : in std_logic;
 awready : out std_logic;
-awaddr  : in  std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-awprot  : in  std_logic_vector(2 downto 0);
-wvalid  : in  std_logic;
-wready  : out std_logic;
-wdata   : in  std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-wstrb   : in  std_logic_vector((AXI_DATA_WIDTH / 8) - 1 downto 0);
-bvalid  : out std_logic;
-bready  : in  std_logic;
-bresp   : out std_logic_vector(1 downto 0);
-arvalid : in  std_logic;
+awaddr : in std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+awprot : in std_logic_vector(2 downto 0);
+wvalid : in std_logic;
+wready : out std_logic;
+wdata : in std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+wstrb : in std_logic_vector((AXI_DATA_WIDTH_G / 8) - 1 downto 0);
+bvalid : out std_logic;
+bready : in std_logic;
+bresp : out std_logic_vector(1 downto 0);
+arvalid : in std_logic;
 arready : out std_logic;
-araddr  : in  std_logic_vector(AXI_ADDR_WIDTH - 1 downto 0);
-arprot  : in  std_logic_vector(2 downto 0);
-rvalid  : out std_logic;
-rready  : in  std_logic;
-rdata   : out std_logic_vector(AXI_DATA_WIDTH - 1 downto 0);
-rresp   : out std_logic_vector(1 downto 0);
+araddr : in std_logic_vector(AXI_ADDR_WIDTH_G - 1 downto 0);
+arprot : in std_logic_vector(2 downto 0);
+rvalid : out std_logic;
+rready : in std_logic;
+rdata : out std_logic_vector(AXI_DATA_WIDTH_G - 1 downto 0);
+rresp : out std_logic_vector(1 downto 0);
 endsnippet
 
 
@@ -404,4 +476,19 @@ snippet statemachinemealy "Mealy style state machine"
   end process;
 endsnippet
 
+
+snippet axistream "AXI Stream interface"
+s_tvalid : in std_logic;
+s_tready : out std_logic;
+s_tdata : in std_logic_vector(AXIS_DATA_WIDTH_G - 1 downto 0);
+s_tstrb : in std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
+s_tkeep : in std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
+s_tlast : in std_logic;
+m_tvalid : out std_logic;
+m_tready : in std_logic;
+m_tdata : out std_logic_vector(AXIS_DATA_WIDTH_G - 1 downto 0);
+m_tstrb : out std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
+m_tkeep : out std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
+m_tlast : out std_logic;
+endsnippet
 
