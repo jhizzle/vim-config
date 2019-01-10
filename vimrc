@@ -1,12 +1,13 @@
 set nocompatible
-filetype off                " Required for vundle
 set rtp+=~/.vim/bundle/Vundle.vim  " Add vundle to the runtime path
+
+filetype off
 
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 
-Plugin 'tpope/vim-sleuth'
+"Plugin 'tpope/vim-sleuth'
 
 Plugin 'majutsushi/tagbar'
 
@@ -31,12 +32,14 @@ Plugin 'honza/vim-snippets'
 Plugin 'SirVer/ultisnips'
 Plugin 'valloric/YouCompleteMe'
 
+Plugin 'vimwiki/vimwiki'
 
 Plugin 'ervandew/supertab'
 
 call vundle#end()
 
-filetype plugin indent on         " required for vundle
+syntax on
+filetype plugin indent on
 
 "Tagbar VHDL Settings {{{
 let g:tagbar_type_vhdl = {
@@ -121,6 +124,7 @@ set softtabstop=4
 
 " status
 set number
+set relativenumber
 set ruler
 set showcmd
 set cursorline
@@ -150,8 +154,9 @@ nnoremap <leader>t :TagbarToggle<CR>
 " Enable/Disable Gundo
 nnoremap <leader>u :GundoToggle<CR>
 
-" Search using Ag
-nnoremap <leader>a :Ag
+" Align vhdl
+nnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
+vnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
 
 " list buffers and get ready to jump
 nnoremap <leader>l :ls<CR>:b<space>
@@ -159,6 +164,9 @@ nnoremap <leader>l :ls<CR>:b<space>
 " Turn on spell check
 nnoremap <leader>sc :set spell! spelllang=en_us<CR>
 nnoremap <leader>ss z=
+
+" Use Ctrl-C for copy
+vnoremap <C-c> "+y
 
 " use the wildmenu
 set wildmenu
@@ -213,8 +221,8 @@ set foldmethod=marker
 " Shortcuts {{{
 nnoremap <leader>w :set wrap!<cr>
 nnoremap <leader>nn :set number!<cr>
-nnoremap <leader>be :%!xxd<cr>
-nnoremap <leader>br :%!xxd -r<cr>
+nnoremap <leader>he :%!xxd<cr>
+nnoremap <leader>hr :set binary<cr>:set noeol<cr>:%!xxd -r<cr>
 
 " }}}
 
@@ -242,8 +250,8 @@ inoremap jk <esc>
 inoremap <esc> <nop>
 
 " Enable and disable detection of trailing whitespace
-nnoremap <leader>ws :match Error '\v\s+$'<cr>
-nnoremap <leader>Ws :match none<cr>
+"nnoremap <leader>ws :match Error '\v\s+$'<cr>
+"nnoremap <leader>Ws :match none<cr>
 
 " automatically insert \v for search (very-magic)
 nnoremap / /\v
@@ -275,10 +283,32 @@ augroup filetype_c
 augroup END
 " }}}
 
+" tcl file settings {{{
+augroup filetype_tcl
+    autocmd!
+    autocmd FileType tcl setlocal shiftwidth=2 tabstop=2 softtabstop=2
+augroup END
+" }}}
+
 " Markdown files {{{
 augroup filetype_md
     autocmd!
     autocmd BufNewFile,BufReadPost *.md,*.txt,README set filetype=markdown
+augroup END
+" }}}
+
+" LaTeX files {{{
+augroup filetype_plaintex
+    autocmd!
+    autocmd BufNewFile,BufReadPost *.tex setlocal shiftwidth=2 tabstop=2
+augroup END
+" }}}
+
+
+" Binary files {{{
+augroup filetype_binary
+    autocmd!
+    autocmd BufNewFile,BufReadPost *.bin setlocal binary noeol
 augroup END
 " }}}
 
@@ -449,5 +479,112 @@ nmap <C-Space><C-Space>d \:vert scs find d <C-R>=expand("<cword>")<CR><CR>
 "{{{ Filetype specific indentation
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType yaml setlocal tabstop=2 shiftwidth=2 softtabstop=2 nosmartindent
+autocmd FileType vhdl setlocal tabstop=2 shiftwidth=2 softtabstop=2 nosmartindent
+autocmd FileType verilog setlocal tabstop=2 shiftwidth=2 softtabstop=2 nosmartindent
+autocmd FileType tex setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType verilog_systemverilog setlocal tabstop=2 shiftwidth=2 softtabstop=2
 "}}}
+
+
+"" {{{ Entity to Component
+"function! VHDL_EntityToComponent()
+"python << endpython
+"import vim
+"import sys
+"
+"(row, col) = vim.current.window.cursor
+"buf = vim.current.buffer
+"
+"
+"
+"
+"
+"
+"def split_name(signame):
+"    signame = signame.strip()
+"    i = signame.find('(')
+"    if i >= 0:
+"        name = signame[:i]
+"        vec = signame[i:]
+"    else:
+"        name = signame
+"        vec = ""
+"    return name, vec
+"
+"
+"
+"(row, col) = vim.current.window.cursor
+"buf = vim.current.buffer
+"line = buf[row - 1]
+"
+"gate = line.strip()
+"
+"a = buf[row]
+"b = buf[row + 1]
+"q = buf[row + 2]
+"
+"# remove the three names
+"del buf[row]
+"del buf[row]
+"del buf[row]
+"
+"# easier to work with this
+"row = row - 1
+"
+"a_name, a_vec = split_name(a)
+"b_name, b_vec = split_name(b)
+"q_name, q_vec = split_name(q)
+"
+"
+"
+"a_slug = a.translate(None, ' ()')
+"b_slug = b.translate(None, ' ()')
+"
+"if gate == "or":
+"    declaration = "  or_" + a_slug + "_" + b_slug + ": lmdrl_or"
+"    old = True
+"    inverted = False
+"elif gate == "nor":
+"    declaration = "  nor_" + a_slug + "_" + b_slug + ": lmdrl_or"
+"    old = True
+"    inverted = True
+"elif gate == "and":
+"    declaration = "  and_" + a_slug + "_" + b_slug + ": lmdrl_and"
+"    old = True
+"    inverted = False
+"elif gate == "nand":
+"    declaration = "  nand_" + a_slug + "_" + b_slug + ": lmdrl_and"
+"    old = True
+"    inverted = True
+"elif gate == "xor":
+"    declaration = "  xor_" + a_slug + "_" + b_slug + ": lmdrl_xor"
+"    old = False
+"    inverted = False
+"else:
+"    print("Error: Unknown gate type")
+"    sys.exit()
+"
+"buf[row] = declaration
+"row += 1
+"buf.append("  port map (", row)
+"row += 1
+"
+"
+"vim.current.window.cursor = (row + 1, 1)
+"
+"
+"endpython
+"endfunction
+"
+"" }}}
+
+"{{{ vimwiki
+
+let g:vimwiki_list = [
+    \ {'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.md'},
+    \ {'path': '~/devel/cw-atc/doc', 'syntax': 'markdown', 'ext': '.md'},
+    \ ]
+
+"}}}
+
 
