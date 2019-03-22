@@ -588,3 +588,5 @@ let g:vimwiki_list = [
 "}}}
 
 
+
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
