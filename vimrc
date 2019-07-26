@@ -39,9 +39,9 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'airblade/vim-gitgutter'
 
-Plug 'tbabej/taskwiki'
-Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'farseer90718/vim-taskwarrior'
+"Plug 'tbabej/taskwiki'
+"Plug 'powerman/vim-plugin-AnsiEsc'
+"Plug 'farseer90718/vim-taskwarrior'
 
 call plug#end()
 
@@ -67,6 +67,7 @@ set cursorline
 set laststatus=2
 set encoding=utf-8
 set scrolloff=7     " shows context around your cursor
+set sidescrolloff=5
 
 " When a bracket is inserted, briefly jump to a matching one
 set showmatch
@@ -77,6 +78,7 @@ set wildmode=list:longest,full
 " Ignore certain types of files on completion
 set wildignore+=*.o,*.obj,*.pyc,.git
 
+set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 "}}}
 
 "{{{ Indentation
@@ -89,7 +91,7 @@ set smartindent
 set tabstop=4
 set shiftwidth=4
 set expandtab
-set backspace=2     " Normal backspace usage (ident,eol,start)
+set backspace=indent,eol,start
 set softtabstop=4
 
 " speed
@@ -238,6 +240,7 @@ nnoremap <leader>w :set wrap!<cr>
 nnoremap <leader>nn :set number!<cr>
 nnoremap <leader>he :%!xxd<cr>
 nnoremap <leader>hr :set binary<cr>:set noeol<cr>:%!xxd -r<cr>
+nnoremap <leader>da "=strftime('%Y-%m-%d')<cr>p
 
 " }}}
 
@@ -262,7 +265,6 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Use jk instead of <esc>, then disable <esc> so that you can get used to jk
 inoremap jk <esc>
-inoremap <esc> <nop>
 
 " Enable and disable detection of trailing whitespace
 "nnoremap <leader>ws :match Error '\v\s+$'<cr>
@@ -592,7 +594,9 @@ autocmd FileType verilog_systemverilog setlocal tabstop=2 shiftwidth=2 softtabst
 "" }}}
 
 "{{{ vimwiki
-
+let g:vimwiki_list = [
+    \ {'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.md'},
+    \ ]
 
 "}}}
 
