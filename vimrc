@@ -1,52 +1,46 @@
 set nocompatible
-set rtp+=~/.vim/bundle/Vundle.vim  " Add vundle to the runtime path
+call plug#begin()
 
-filetype off
+"Plug 'tpope/vim-sleuth'
 
-call vundle#begin()
+Plug 'majutsushi/tagbar'
 
-Plugin 'gmarik/Vundle.vim'
+Plug 'godlygeek/tabular'
 
-"Plugin 'tpope/vim-sleuth'
+Plug 'kien/ctrlp.vim'
 
-Plugin 'majutsushi/tagbar'
+Plug 'rking/ag.vim'
 
-Plugin 'godlygeek/tabular'
+Plug 'sjl/gundo.vim'
 
-Plugin 'kien/ctrlp.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
-Plugin 'rking/ag.vim'
+Plug 'tpope/vim-fugitive'
 
-Plugin 'sjl/gundo.vim'
+Plug 'christoomey/vim-tmux-navigator'
 
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'chase/vim-ansible-yaml'
 
-Plugin 'tpope/vim-fugitive'
+Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'valloric/YouCompleteMe'
 
-Plugin 'christoomey/vim-tmux-navigator'
+Plug 'vimwiki/vimwiki'
 
-Plugin 'chase/vim-ansible-yaml'
+Plug 'ervandew/supertab'
 
-Plugin 'honza/vim-snippets'
-Plugin 'SirVer/ultisnips'
-Plugin 'valloric/YouCompleteMe'
+Plug 'terryma/vim-multiple-cursors'
 
-Plugin 'vimwiki/vimwiki'
+Plug 'tpope/vim-surround'
 
-Plugin 'ervandew/supertab'
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 
-Plugin 'terryma/vim-multiple-cursors'
-
-Plugin 'tpope/vim-surround'
-
-Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-
-Plugin 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 
 
-call vundle#end()
+call plug#end()
 
 syntax on
 filetype plugin indent on
