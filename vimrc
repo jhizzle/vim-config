@@ -36,6 +36,16 @@ Plugin 'vimwiki/vimwiki'
 
 Plugin 'ervandew/supertab'
 
+Plugin 'terryma/vim-multiple-cursors'
+
+Plugin 'tpope/vim-surround'
+
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+
+Plugin 'airblade/vim-gitgutter'
+
+
 call vundle#end()
 
 syntax on
