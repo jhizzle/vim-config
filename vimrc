@@ -24,7 +24,7 @@ Plug 'chase/vim-ansible-yaml'
 
 Plug 'honza/vim-snippets'
 Plug 'SirVer/ultisnips'
-Plug 'valloric/YouCompleteMe'
+Plug 'valloric/YouCompleteMe', { 'do': './install.py' }
 
 Plug 'vimwiki/vimwiki'
 
@@ -39,6 +39,9 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'airblade/vim-gitgutter'
 
+Plug 'tbabej/taskwiki'
+Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'farseer90718/vim-taskwarrior'
 
 call plug#end()
 
