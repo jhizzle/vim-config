@@ -587,10 +587,6 @@ autocmd FileType verilog_systemverilog setlocal tabstop=2 shiftwidth=2 softtabst
 
 "{{{ vimwiki
 
-let g:vimwiki_list = [
-    \ {'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.md'},
-    \ {'path': '~/devel/cw-atc/doc', 'syntax': 'markdown', 'ext': '.md'},
-    \ ]
 
 "}}}
 
