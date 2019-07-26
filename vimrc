@@ -45,8 +45,64 @@ Plug 'farseer90718/vim-taskwarrior'
 
 call plug#end()
 
-syntax on
+" keybindings
+let mapleader=" "
+let maplocalleader='\'
+
+
+"{{{ Visual settings
+
+" Use a dark background
+set background=dark
+
+" syntax coloring
+syntax enable
+
+" status
+set number
+set relativenumber
+set ruler
+set showcmd
+set cursorline
+set laststatus=2
+set encoding=utf-8
+set scrolloff=7     " shows context around your cursor
+
+" When a bracket is inserted, briefly jump to a matching one
+set showmatch
+
+" use the wildmenu
+set wildmenu
+set wildmode=list:longest,full
+" Ignore certain types of files on completion
+set wildignore+=*.o,*.obj,*.pyc,.git
+
+"}}}
+
+"{{{ Indentation
+
+" Indentation
 filetype plugin indent on
+
+" indentation
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set backspace=2     " Normal backspace usage (ident,eol,start)
+set softtabstop=4
+
+" speed
+set lazyredraw      " Speeds up macros by not redrawing at each step
+
+"}}}
+
+"{{{ House keeping
+
+" Write swap file to disk after every 50 characters
+set updatecount=50
+"}}}
+
 
 "Tagbar VHDL Settings {{{
 let g:tagbar_type_vhdl = {
@@ -113,48 +169,6 @@ if !exists("my_auto_commands_loaded")
 
 " }}}
 
-"let g:airline_powerline_fonts=1
-
-"" Use a dark background
-set background=dark
-
-" syntax coloring
-syntax on
-
-" indentation
-set smartindent
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set backspace=2     " Normal backspace usage (ident,eol,start)
-set softtabstop=4
-
-" status
-set number
-set relativenumber
-set ruler
-set showcmd
-set cursorline
-set laststatus=2
-set encoding=utf-8
-set scrolloff=7     " shows context around your cursor
-
-" speed
-set lazyredraw      " Speeds up macros by not redrawing at each step
-
-"" Write contents of the file, if it has been modified, on buffer exit
-"set autowrite
-
-" When a bracket is inserted, briefly jump to a matching one
-set showmatch
-
-" Write swap file to disk after every 50 characters
-set updatecount=50
-
-" keybindings
-let mapleader=" "
-let maplocalleader='\'
-
 " Enable/Disable tagbar
 nnoremap <leader>t :TagbarToggle<CR>
 
@@ -174,12 +188,6 @@ nnoremap <leader>ss z=
 
 " Use Ctrl-C for copy
 vnoremap <C-c> "+y
-
-" use the wildmenu
-set wildmenu
-set wildmode=list:longest,full
-" Ignore certain types of files on completion
-set wildignore+=*.o,*.obj,*.pyc,.git
 
 
 " Tell vim to remember certain things when we exit
@@ -448,8 +456,6 @@ endfunction
 let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-j>'
-
-let g:UltiSnipsUsePythonVersion = 2
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<c-l>"
