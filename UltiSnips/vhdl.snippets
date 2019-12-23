@@ -62,21 +62,25 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library idahoscientific_lib;
-use idahoscientific_lib.std_pkg.all;
-use idahoscientific_lib.std_sim_pkg.all;
+library vunit_lib;
+context vunit_lib.vunit_context;
+context vunit_lib.com_context;
+
+library osvvm;
+context osvvm.osvvmcontext;
+
 
 entity ${1:widget}_tb is
   generic (
-    CLK_PERIOD_G : time := 10 ns;
+    runner_cfg: string;
   );
 end entity $1_tb;
 
 architecture sim of $1_tb is
 
-  signal runsim : boolean := true;
+  signal clk: std_logic := '0';
 
-  procedure tick(count : in natural := 1) is
+  procedure tick(count: in natural := 1) is
   begin
     for i in 1 to count loop
       wait until rising_edge(clk);
@@ -85,31 +89,36 @@ architecture sim of $1_tb is
 
 begin
 
-  p_clk_proc: process
-  begin
-    while runsim loop
-      clk <= '0';
-      wait for CLK_PERIOD_G / 2;
-      clk <= '1';
-      wait for CLK_PERIOD_G / 2;
-    end loop;
-    wait;
-  end process;
+  clk <= not clk after 5 ns;
 
 
-  i_uut: entity work.$1
+  uut: entity work.$1
   $0
 
 
-  p_main_sim: process
+  main_sim: process
   begin
+    test_runner_setup(runner, runner_cfg);
+    show(get_logger(default_checker), display_handler, pass);
+
     wait for 200 ns; -- wait for at least 100ns for GSR
     tick;
 
+    while test_suite loop
+      ------------------------------------------------------------------------
+      if run("first_test") then
+      ------------------------------------------------------------------------
+        info("Run test here");
+      end if;
+    end loop;
+
     tick(10);
-    runsim <= false;
+    test_runner_cleanup(runner);
     wait;
   end process;
+
+  -- end test if it gets stuck
+  test_runner_watchdog(runner, 100 ms);
 
 end architecture;
 endsnippet
@@ -150,20 +159,20 @@ entity ${1:widget} is
 end entity $1;
 
 architecture ${4:rtl} of $1 is
-  type state_t is (${0});
+  type state_type is (${0});
 
-  type reg_t is
+  type reg_type is
     record
-      state : state_t;
+      state: state_type;
     end record;
 
-  signal r, rin : reg_t;
+  signal r, rin: reg_type;
 begin
 
-  p_comb: process (
+  combinational: process (
     r
   ) is
-    variable v : reg_t;
+    variable v: reg_type;
   begin
     v := r;
 
@@ -171,7 +180,7 @@ begin
   end process;
 
 
-  p_sync: process (clk) is
+  synchronous: process (clk) is
   begin
     if rising_edge(clk) then
       r <= rin;
@@ -478,17 +487,17 @@ endsnippet
 
 
 snippet axistream "AXI Stream interface"
-s_tvalid : in std_logic;
-s_tready : out std_logic;
-s_tdata : in std_logic_vector(AXIS_DATA_WIDTH_G - 1 downto 0);
-s_tstrb : in std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
-s_tkeep : in std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
-s_tlast : in std_logic;
-m_tvalid : out std_logic;
-m_tready : in std_logic;
-m_tdata : out std_logic_vector(AXIS_DATA_WIDTH_G - 1 downto 0);
-m_tstrb : out std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
-m_tkeep : out std_logic_vector((AXIS_DATA_WIDTH_G / 8) - 1 downto 0);
-m_tlast : out std_logic;
+s_tvalid: in std_logic;
+s_tready: out std_logic;
+s_tdata: in std_logic_vector(C_AXIS_TDATA_WIDTH - 1 downto 0);
+s_tstrb: in std_logic_vector((C_AXIS_TDATA_WIDTH / 8) - 1 downto 0);
+s_tkeep: in std_logic_vector((C_AXIS_TDATA_WIDTH / 8) - 1 downto 0);
+s_tlast: in std_logic;
+m_tvalid: out std_logic;
+m_tready: in std_logic;
+m_tdata: out std_logic_vector(C_AXIS_TDATA_WIDTH - 1 downto 0);
+m_tstrb: out std_logic_vector((C_AXIS_TDATA_WIDTH / 8) - 1 downto 0);
+m_tkeep: out std_logic_vector((C_AXIS_TDATA_WIDTH / 8) - 1 downto 0);
+m_tlast: out std_logic;
 endsnippet
 

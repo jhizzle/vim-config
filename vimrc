@@ -1,7 +1,10 @@
 set nocompatible
+filetype plugin on
+syntax on
+
 call plug#begin()
 
-"Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-sleuth'
 
 Plug 'majutsushi/tagbar'
 
@@ -177,10 +180,6 @@ nnoremap <leader>t :TagbarToggle<CR>
 " Enable/Disable Gundo
 nnoremap <leader>u :GundoToggle<CR>
 
-" Align vhdl
-nnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
-vnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
-
 " list buffers and get ready to jump
 nnoremap <leader>l :ls<CR>:b<space>
 
@@ -236,12 +235,25 @@ set foldlevelstart=0
 set foldmethod=marker
 
 " Shortcuts {{{
+
+" word wrap
 nnoremap <leader>w :set wrap!<cr>
+
+" no numbers
 nnoremap <leader>nn :set number!<cr>
+
+" hex edit and hex restore
 nnoremap <leader>he :%!xxd<cr>
 nnoremap <leader>hr :set binary<cr>:set noeol<cr>:%!xxd -r<cr>
+
+" Insert date into text
 nnoremap <leader>da "=strftime('%Y-%m-%d')<cr>p
 
+" yank all text and put into copy buffer
+nnoremap <leader>ya ggVG"+y''
+
+" insert random hex byte
+nnoremap <leader>rh :r!head -c 1 /dev/urandom \| xxd -g0 -p<cr>
 " }}}
 
 " Abbreviations {{{
@@ -260,7 +272,7 @@ set hlsearch
 " Uppercase current word while writing (good for CONSTANTS)
 inoremap <c-u> <esc>viwU
 
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>ev :vsplit ~/.vim/vimrc<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Use jk instead of <esc>, then disable <esc> so that you can get used to jk
@@ -283,17 +295,13 @@ nnoremap dh :nohlsearch<cr>
 " Vim start settings {{{
 augroup vim_start
     autocmd VimEnter * echo '(=^.^=)'
-
-    " In text files, always limit the width of text to 78 characters
-    " autocmd BufRead *.txt set tw=78
-    " When editing a file, always jump to the last cursor position
-    autocmd BufReadPost *
-    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
-    \   exe "normal! g'\"" |
-    \ endif
-
 augroup END
 
+" jump to the last position when reopening a file
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+        \| exe "normal! g'\"" | endif
+endif
 " }}}
 
 " Vimscript file settings {{{
@@ -341,6 +349,22 @@ augroup END
 
 
 " VHDL/Verilog help {{{
+
+" Align vhdl
+nnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
+vnoremap <leader>vl :Tabularize /: in \\|: out\\|:=\\|:\\|<=\\|=><CR>
+
+" Reverse ports
+vnoremap <leader>vrev :s/\v\s+in\s+/ blahout /g<CR>gv:s/\v\s+out\s+/ in /g<CR>gv:s/blahout/out/g<CR>gv:s/\v(\s+\w+)\s*:/\1:/g<CR>
+
+" turn IO into signals (useful for simulation testbenches)
+vnoremap <leader>vsig :s/\v^\s+(\w+)\s*:/  signal \1:/g<CR>gv:s/\v\s*in\s+std_logic_vector(.*);/ std_logic_vector\1 := (others => '0');/g<CR>gv:s/\v\s*in\s+std_logic\s*;/ std_logic := '0';/g<CR>gv:s/\v\s*in\s+(.*);/ \1; -- INIT/g<CR>gv:s/\v\s*out\s+/ /g<CR>
+
+" remove in ports for inserting into register record
+vnoremap <leader>vri :g/ in /d<CR>gv:s/\v\s*:\s*out\s+/: /g<CR>
+
+" remove out ports
+vnoremap <leader>vro :g/ out /d<CR>gv:s/\v\s*:\s*in\s.*/,/g<CR>
 
 "<portname> (i|o) [7 downto 0]
 " leave off width if you want std_logic instead of std_logic_vector
@@ -511,102 +535,105 @@ autocmd FileType verilog_systemverilog setlocal tabstop=2 shiftwidth=2 softtabst
 "}}}
 
 
-"" {{{ Entity to Component
-"function! VHDL_EntityToComponent()
-"python << endpython
-"import vim
-"import sys
-"
-"(row, col) = vim.current.window.cursor
-"buf = vim.current.buffer
-"
-"
-"
-"
-"
-"
-"def split_name(signame):
-"    signame = signame.strip()
-"    i = signame.find('(')
-"    if i >= 0:
-"        name = signame[:i]
-"        vec = signame[i:]
-"    else:
-"        name = signame
-"        vec = ""
-"    return name, vec
-"
-"
-"
-"(row, col) = vim.current.window.cursor
-"buf = vim.current.buffer
-"line = buf[row - 1]
-"
-"gate = line.strip()
-"
-"a = buf[row]
-"b = buf[row + 1]
-"q = buf[row + 2]
-"
-"# remove the three names
-"del buf[row]
-"del buf[row]
-"del buf[row]
-"
-"# easier to work with this
-"row = row - 1
-"
-"a_name, a_vec = split_name(a)
-"b_name, b_vec = split_name(b)
-"q_name, q_vec = split_name(q)
-"
-"
-"
-"a_slug = a.translate(None, ' ()')
-"b_slug = b.translate(None, ' ()')
-"
-"if gate == "or":
-"    declaration = "  or_" + a_slug + "_" + b_slug + ": lmdrl_or"
-"    old = True
-"    inverted = False
-"elif gate == "nor":
-"    declaration = "  nor_" + a_slug + "_" + b_slug + ": lmdrl_or"
-"    old = True
-"    inverted = True
-"elif gate == "and":
-"    declaration = "  and_" + a_slug + "_" + b_slug + ": lmdrl_and"
-"    old = True
-"    inverted = False
-"elif gate == "nand":
-"    declaration = "  nand_" + a_slug + "_" + b_slug + ": lmdrl_and"
-"    old = True
-"    inverted = True
-"elif gate == "xor":
-"    declaration = "  xor_" + a_slug + "_" + b_slug + ": lmdrl_xor"
-"    old = False
-"    inverted = False
-"else:
-"    print("Error: Unknown gate type")
-"    sys.exit()
-"
-"buf[row] = declaration
-"row += 1
-"buf.append("  port map (", row)
-"row += 1
-"
-"
-"vim.current.window.cursor = (row + 1, 1)
-"
-"
-"endpython
-"endfunction
-"
-"" }}}
+" {{{ Entity to Component
+function! VHDL_EntityToComponent()
+python << endpython
+import vim
+import sys
+
+(row, col) = vim.current.window.cursor
+buf = vim.current.buffer
+
+
+
+
+
+
+def split_name(signame):
+    signame = signame.strip()
+    i = signame.find('(')
+    if i >= 0:
+        name = signame[:i]
+        vec = signame[i:]
+    else:
+        name = signame
+        vec = ""
+    return name, vec
+
+
+
+(row, col) = vim.current.window.cursor
+buf = vim.current.buffer
+line = buf[row - 1]
+
+gate = line.strip()
+
+a = buf[row]
+b = buf[row + 1]
+q = buf[row + 2]
+
+# remove the three names
+del buf[row]
+del buf[row]
+del buf[row]
+
+# easier to work with this
+row = row - 1
+
+a_name, a_vec = split_name(a)
+b_name, b_vec = split_name(b)
+q_name, q_vec = split_name(q)
+
+
+
+a_slug = a.translate(None, ' ()')
+b_slug = b.translate(None, ' ()')
+
+if gate == "or":
+    declaration = "  or_" + a_slug + "_" + b_slug + ": lmdrl_or"
+    old = True
+    inverted = False
+elif gate == "nor":
+    declaration = "  nor_" + a_slug + "_" + b_slug + ": lmdrl_or"
+    old = True
+    inverted = True
+elif gate == "and":
+    declaration = "  and_" + a_slug + "_" + b_slug + ": lmdrl_and"
+    old = True
+    inverted = False
+elif gate == "nand":
+    declaration = "  nand_" + a_slug + "_" + b_slug + ": lmdrl_and"
+    old = True
+    inverted = True
+elif gate == "xor":
+    declaration = "  xor_" + a_slug + "_" + b_slug + ": lmdrl_xor"
+    old = False
+    inverted = False
+else:
+    print("Error: Unknown gate type")
+    sys.exit()
+
+buf[row] = declaration
+row += 1
+buf.append("  port map (", row)
+row += 1
+
+
+vim.current.window.cursor = (row + 1, 1)
+
+
+endpython
+endfunction
+
+" }}}
 
 "{{{ vimwiki
 let g:vimwiki_list = [
     \ {'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.md'},
     \ ]
+
+" let vimwiki register all markdown files as vimwiki
+let g:vimwiki_ext2syntax = {'.md': 'markdown'}
 
 "}}}
 
